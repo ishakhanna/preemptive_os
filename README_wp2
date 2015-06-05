@@ -1,0 +1,31 @@
+TEAM MEMBERS
+
+1. Isha Khanna 109771959
+2. Murali Krishna 109769583 
+3. Nitish Garg 109754721
+
+
+DESCRIPTION
+
+Features supported:
+	1. Print output to the console. Supports scrolling, new line(\n) and tab(\t).
+	2. Timer ISR print number of seconds passed since boot.
+	3. Keyboard ISR supports printable  characters, shift key and control key. 
+	   Note: 
+		1. Ctrl+j, Ctrl+m and return will print “^M” 
+		2. Backspace will print “\b”
+
+
+FILES SUBMITTED
+
+1. sys/idt.c
+2. sys/idt.s
+3. sys/irq.c
+4. sys/outb.c
+5. sys/timer.c
+6. sys/keyboard.c
+7. sys/printf.c
+8. sys/string_helper.c
+9. include/sys/idt.h
+10. include/sys/stdlib.h
+11. include/sys/string_helper.h

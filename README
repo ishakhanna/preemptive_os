@@ -1,0 +1,187 @@
+TEAM MEMBERS
+
+1. Isha Khanna 109771959
+2. Murali Krishna 109769583 
+3. Nitish Garg 109754721
+
+Project Level - Preemptive OS (70 points)
+(All functionalities mentioned on the project hints page are implemented.)
+
+IMPORTANT POINTS:
+	1. In order to run your own shell you can do either of the two:
+    		1. Change the shell_bin variable to point to your executable name in sys/main.c:5
+    		2. Run your shell binary in the default shell that comes up once you run QEMU.
+	2. /rootfs is the root of the filesystem.
+	3. Most of the functionality should work with both absolute as well as relative path.
+	   However, in case relative path does not work you can try the same command with absolute path.
+
+DESCRIPTION
+
+Features supported:
+	1. Shell to interact with the underlying OS.
+	2. Binaries provided:
+		1. /rootfs/bin/ls/
+		2. /rootfs/bin/grep
+		3. /rootfs/bin/kill (usage: kill -9 <pid>)
+		4. /rootfs/bin/ps
+		5. /rootfs/bin/echo
+	3. In order to yield the CPU you can use yield() or sleep(0).
+
+
+COMMANDS
+	1. help					  - displays available commands in sbush shell.
+	2. cd <directory_path> 			  - changes current working directory to directory_path.
+	3. prompt <prompt_name> 		  - changes PS1 variable.
+	4. exit					  - exits sbush shell.
+	5. setpath <new_path> OR $PATH:<new_path> - sets PATH vaiable. "$PATH" is required if you want to append to old path.
+	6. echo <env_variable>			  - displays the environmental variable.
+	7. /rootfs/bin/sbush <script_name>.sbush	  - executes sbush scripts
+	8. <script_name>.<script_interpreter>	  - executes the script with interpreter specified.
+	9. <binary_file>			  - executes the binary_file.
+	10. cmd1|cmd2|cmd3	                  - Executes the commands in the given order with output of first given to input of next.
+	   (NOTE: no spaces around the pipe)
+
+EXAMPLES
+	Inside sbush console:
+		1. cd /rootfs 			- takes you to home directory.
+		2. cd ..			- takes you to immediate parent directory.
+		3. cd -				- takes you to previous visited directory. OLDPWD should be defined as an env var in console.
+		4. prompt isha			- changes PS1 variable to "isha". Now "isha#" will be displayed.
+		5. echo $PATH			- displays the value of PATH environmental variable.
+		6. echo nitish			- displays "nitish".
+		7. setpath /bin				- sets the PATH vaiable to "/bin".
+		8. setpath /bin/ls:$PATH:/home/nitish	- adds "/bin/ls" and "/home/nitish" to existing PATH variable.
+		9. /rootfs/bin/sbush myscript.sbush				- executes myscript using sh interpreter.
+		10. myscript.sbush			- executes myscript using sbush interpreter.
+		11. /rootfs/bin/ls				- lists files and directories in present working directory.
+		12. ls|grep isha     	        - executes ls -la and then grep isha from the results
+
+SYSTEM CALLS DETAILS:
+
+    Name		: write
+    Syntax		: ssize_t write(int fildes, const void *buf, size_t nbytes)
+    Description		: This system call writes nbytes from the bug contents to the given file descriptor.
+    Dependencies	: Cannot write to a file since tarfs is readonly file system.
+    Return value	: Returns the number of bytes written. Returns error no in case the write was not successful.
+
+    Name		: exit
+    Syntax		: void exit(int status)
+    Description		: This system call exits the current running process with status. Exit calls context switch to schedule next process in ready queue.
+    Return value	: Does not return anything.
+
+    Name		: getpid
+    Syntax		: pid_t getpid(void)
+    Description		: This system call returns the pid of the current running process.
+    Return value	: This syscall is always successful.
+
+    Name		: getppid
+    Syntax		: pid_t getppid(void)
+    Description		: This system call returns the pid of the parent of the current running process.
+    Return value	: This syscall is always successful.
+
+    Name		: brk
+    Syntax		: int brk(void *end_data_segment);
+    Description		: This system call returns the new break pointer of the heap.
+    Return value	: Returns the error no in case of error(mostly when system is out of memory).
+
+    Name		: fork
+    Syntax		: pid_t fork(void)
+    Description		: This system call creates a new process by duplicating the calling process. Copy on Write is used to copy the virtual address space of the parent to the child.
+    Return value	: On success it returns child pid to the parent and 0 to the child. In case of failure it returns appropriate error number e.g. system is out of memory, or maximum process limit has been reached.
+
+    Name		: yield
+    Syntax		: void yield(void);
+    Description		: This system call yields the cpu from the current process and calls context switch to schedule the next process in the running queue.
+    Return value	: Does not return any value.
+
+    Name		: nanosleep
+    Syntax		: unsigned int sleep(unsigned int seconds);
+    Description		: This system call suspends the execution of the calling process until the time specified by seconds has elapsed. This in turn calls the scheduler in order to schedule next process in the running queue.
+              		sleep(0) can be used as an alternative to yield to call the scheduler.
+    Return value	: Returns 0 on successful sleep.
+
+    Name		: wait4
+    Syntax		: pid_t waitpid(pid_t pid, int *status, int options);
+    Description		: This system call moves the calling process to the waiting queue until the process with given pid is terminated. Status will get the status of the terminating process.
+   			In case pid is -1 the process waits for any one of its children.
+    Return value	: On success returns the pid of the process that was being waited for.
+
+    Name		: execve
+    Syntax		: int execve(const char *filename, char *const argv[], char *const envp[]);
+    Description		: This system call executes the program pointed to by filename. filename must be a binary executable. The system call exit the calling process and creates a new process from the given binary(pointed to by the filename) assigning it the same pid.
+    Return value	: On success execve does not return since the calling process is exited. On error it returns the appropriate error no(e.g. ENOMEM).
+
+    Name		: alarm
+    Syntax		: unsigned int alarm(unsigned int seconds);
+    Description		: This system call yields the cpu from the current process and calls context switch to schedule the next process in the running queue.
+    Return value	: Does not return any value.
+
+    Name		: kill
+    Syntax		: int kill(int pid);
+    Description		: This system call kills the process with the given pid.
+    Return value	: Returns 0 on success. Returns -MYESRCH(No such process) in case given pid is invalid.
+
+    Name		: ps
+    Syntax		: int ps();
+    Description		: This system call prints the number of processes and their pid in the running and wait queue.
+    Return value	: This syscall is always successful.
+
+    Name		: open
+    Syntax		: int open(const char *pathname, int flags)
+    Description		: This system call tries to open a file or directory specified by 'pathname' from tarfs filesystem.
+    Dependencies	: Tarfs is read-only filesystem. O_WRONLY, O_RDWR, O_CREAT flags are not allowed.
+    Return value	: Returns a file descriptor for the opened file or directory. -1 in case of error.
+
+    Name		: close
+    Syntax		: int fd(int fd)
+    Description		: This system call closes the file or directory previously opened by open system call.
+    Dependencies	: NONE
+    Return value	: Returns 0 on success. -1 otherwise.
+
+    Name		: read
+    Syntax		: ssize_t read(int fildes, void *buf, size_t nbytes)
+    Description		: This system call reads 'nbytes' into 'buf' from the file specified by fildes.
+    Depedencies		: Make sure to get the fildes through open system call before issuing read.
+    Return value	: Returns 'bytes read' on usccess. -1 otherwise.
+
+    Name		: lseek
+    Syntax		: off_t lseek(int fildes, off_t offset, int whence)
+    Description		: Moves the curser to specific position in a file based on offset and whence values.
+    Dependencies	: Make sure fildes is valid.
+    Return value	: returns position of curser position from the start of the file in bytes.
+
+    Name		: getcwd
+    Syntax		: char *getcwd(char *buf, size_t size)
+    Description		: Fetches the current working directory for the current process.
+    Dependencies	: NONE
+    Return value	: Current working directory for current process.
+
+    Name		: chdir
+    Syntax		: int chdir(const char *path)
+    Description		: Changes the current working directory to directory specified by path if it is valid.
+    Dependencies	: NONE
+    Return value	: Returns 0 on success. -1 otherwise.
+
+    Name		: dup
+    Syntax		: int dup(int oldfd);
+    Description		: Duplicates the oldfd to the lowest-numbered unused descriptor of the process.
+    Dependencies	: oldfd should be valid.
+    Return value	: Returns new descriptor on success, -1 otherwise.
+
+    Name		: dup2
+    Syntax		: int dup2(int oldfd, int newfd)
+    Description		: Duplicates the oldfd to newfd. If necessary, newfd will be closed before duplicating.
+    Dependencies	: oldfd should be valid.
+    Return value	: Returns new descriptor on success, -1 otherwise.
+
+    Name		: pipe
+    Syntax		: int pipe(int fildes[2])
+    Description		: Creates a pipe for interprocess communication.
+    Dependencies	: NONE
+    Return value	: Returns 2 file descriptors fd[0] representing read end and fd[1] representing the write end of pipe.
+
+    Name		: getdents
+    Syntax		: int getdents(unsigned int fd, struct dirent *dirp, unsigned int count)
+    Description		: System call to read the contents of directory in the form of struct dirent.
+    Dependencies	: fd should be valid.
+    Return value	: Returns number of bytes read on success. -1 otherwise.

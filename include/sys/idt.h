@@ -1,0 +1,1 @@
+void reload_idt();

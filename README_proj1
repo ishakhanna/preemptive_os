@@ -1,0 +1,92 @@
+TEAM MEMBERS
+
+1. Nitish Garg 109754721
+2. Isha Khanna 109771959
+3. Murali Krishna 109769583
+
+
+INTRODUCTION
+
+SBUSH is a shell which supports basic functionalities like changing directory, executing scripts etc.
+
+
+DESCRIPTION
+
+SBUSH shell supports essential features such as,
+	1. Changing directory.
+	2. Execute binaries interactively.
+	3. Execute scripts.
+	4. Execute pipelines of binaries(/bin/ls|/bin/grep test).
+	5. Set and use PATH and PS1 variables.
+
+
+HOW TO RUN
+
+Execute "sbush" binary in command prompt/console.
+
+
+COMMANDS
+	1. help					  - displays available commands in sbush shell.
+	2. cd <directory_path> 			  - changes current working directory to directory_path.
+	3. prompt <prompt_name> 		  - changes PS1 variable.
+	4. exit					  - exits sbush shell.
+	5. setpath <new_path> OR $PATH:<new_path> - sets PATH vaiable. "$PATH" is required if you want to append to old path.
+	6. echo <env_variable>			  - displays the environmental variable.
+	7. <script_name>.<script_interpreter>	  - executes the script with interpreter specified.
+	8. <binary_file>			  - executes the binary_file.
+	9. cmd1|cmd2|cmd3	                  - Executes the commands in the given order with output of first given to input of next.
+	   (NOTE: no spaces around the pipe)
+
+EXAMPLES
+	Inside sbush console:
+		1. cd /home 			- takes you to home directory.
+		2. cd ..			- takes you to immediate parent directory.
+		3. cd -				- takes you to previous visited directory. OLDPWD should be defined as an env var in console.
+		4. prompt isha			- changes PS1 variable to "isha". Now "isha#" will be displayed.
+		5. echo $PATH			- displays the value of PATH environmental variable.
+		6. echo nitish			- displays "nitish".
+		7. setpath /bin				- sets the PATH vaiable to "/bin".
+		8. setpath /bin/ls:$PATH:/home/murali	- adds "/bin/ls" and "/home/murali" to existing PATH variable.
+		9. myscript.sh				- executes myscript using sh interpreter.
+		10. myscript.sbush			- executes myscript using sbush interpreter.
+		11. /bin/ls				- lists files and directories in present working directory.
+		12. ls -la|grep murali     	        - executes ls -la and then grep murali from the results
+
+	Outside sbush console (parent console):
+	1. ./rootfs/bin/sbush <script_file>.<script_interpreter> - executes script_file using script_interpreter.
+
+
+FILES SUBMITTED
+
+1. ./bin/sbush/sbush.c - file which is the entry point for the shell. 
+
+/libc files:
+1. brk.c	- file contains implementation for break system call.
+2. close.c	- file contains implementation for close system call.
+3. dir_opr.c	- file contains implementation for change, open, read, close, current directory.
+4. dup.c	- file contains implementation for dup and dup2
+5. execve.c 	- file contains implementation for execve system call.
+6. exit.c 	- file contains implementation for exit system call.
+7. fork.c 	- file contains implementation for fork, getpid, getppid, sleep and alarm system calls. 
+8. lseek.c 	- file contains implementation for lseek system call.
+9. malloc.c 	- file contains implementation for malloc and free system calls.
+10. open.c 	- file contains implementation for open system call.
+11. pipe.c 	- file contains implementation for pipe system call.
+12. printf.c 	- file conatins implementation fo printf library call.
+13. read_write.c - file contains implementation for read and write system calls.
+14. scanf.c  	- file contains implementation for scanf library call.
+15. wait.c	- file contains implementation for waitpid system call.
+
+/include files:
+1. cd.h		- file contains implementation for change directory.
+2. echo.h 	- file contains implementation for echo command.
+3. myerrno.h 	- file contains definitions of eror messages and corresponding error numbers.
+4. path.h 	- file contains implementation for setpath command.
+5. string_helper.h  - file contains string utility functions.
+6. constants.h - file contains macro definitions for constants.
+7. help.h 	- file contains implementation for help command.
+8. mypipe.h 	- file contains implementation for pipe command.
+9. script_exec.h - file contains implementation for executing scripts and binaries.
+10. string1.h 	- file contains implementation for helper functions.
+11. utilities.h	- file contains declartions of all header files defined.
+
